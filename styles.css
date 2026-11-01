@@ -93,7 +93,7 @@ select {
   font-size: 0.72rem;
 }
 
-h1, h2, h3, p {
+h1, h2, h3, h4, p {
   margin: 0;
 }
 
@@ -218,7 +218,8 @@ h1 {
 
 .roster-container,
 .transfer-list,
-.fixtures-list {
+.fixtures-list,
+.history-list {
   display: grid;
   gap: 0.8rem;
 }
@@ -289,6 +290,21 @@ h1 {
 .player-status.fitness {
   background: rgba(77, 220, 137, 0.16);
   color: #dffff0;
+}
+
+.player-attributes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.attr-pill {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
 }
 
 .market-card {
@@ -369,6 +385,36 @@ h1 {
   margin-top: 0.9rem;
 }
 
+.match-feed-panel {
+  margin-top: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  padding: 0.75rem 0.8rem;
+}
+
+.match-feed-panel h4 {
+  margin-bottom: 0.6rem;
+  color: var(--gold);
+}
+
+#matchEventFeed {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+#matchEventFeed li {
+  color: var(--muted);
+  font-size: 0.82rem;
+  padding: 0.35rem 0.4rem;
+  border-left: 2px solid rgba(77, 220, 137, 0.7);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+}
+
 .league-table {
   width: 100%;
   border-collapse: collapse;
@@ -384,10 +430,12 @@ h1 {
 }
 
 .league-block,
+.finance-block,
 .log-block {
   margin-top: 1rem;
 }
 
+.history-list,
 #logList {
   list-style: none;
   padding: 0;
@@ -396,6 +444,7 @@ h1 {
   gap: 0.7rem;
 }
 
+.history-list li,
 #logList li {
   border-left: 3px solid var(--green);
   background: rgba(255, 255, 255, 0.025);

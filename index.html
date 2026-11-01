@@ -35,8 +35,20 @@
               <strong id="seasonValue">1</strong>
             </div>
             <div class="stat-card">
+              <span>Bank</span>
+              <strong id="bankValue">₦0</strong>
+            </div>
+            <div class="stat-card">
               <span>Budget</span>
               <strong id="budgetValue">₦0</strong>
+            </div>
+            <div class="stat-card">
+              <span>Revenue</span>
+              <strong id="revenueValue">₦0</strong>
+            </div>
+            <div class="stat-card">
+              <span>Wage Bill</span>
+              <strong id="wageValue">₦0</strong>
             </div>
             <div class="stat-card">
               <span>Reputation</span>
@@ -61,6 +73,10 @@
             <div class="stat-card">
               <span>Strength</span>
               <strong id="teamStrengthValue">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>Transfer Budget</span>
+              <strong id="transferBudgetValue">₦0</strong>
             </div>
           </section>
 
@@ -120,6 +136,10 @@
               <button id="startMatchBtn" class="primary">Start 2D Match</button>
               <button id="quickResultBtn" class="secondary">Quick Result</button>
             </div>
+            <div class="match-feed-panel">
+              <h4>Match Flow</h4>
+              <ul id="matchEventFeed"></ul>
+            </div>
           </div>
         </section>
 
@@ -147,6 +167,11 @@
               </thead>
               <tbody id="leagueTableBody"></tbody>
             </table>
+          </section>
+
+          <section class="finance-block">
+            <h3>Club History</h3>
+            <ul id="historyList" class="history-list"></ul>
           </section>
 
           <section class="log-block">
