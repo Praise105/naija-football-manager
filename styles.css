@@ -1,0 +1,316 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #071d14;
+  --bg-soft: #0f2f23;
+  --panel: #12372d;
+  --panel-strong: #1b4d3b;
+  --line: rgba(255, 255, 255, 0.08);
+  --text: #edf5ef;
+  --muted: #b8d0c2;
+  --green: #4ddc89;
+  --green-dark: #2a9d65;
+  --gold: #f0d26d;
+  --red: #ff6b6b;
+  --blue: #72b7ff;
+  --shadow: rgba(0, 0, 0, 0.28);
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #030f0a 0%, var(--bg) 40%, #091d16 100%);
+  color: var(--text);
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button.primary {
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  color: #f3fff7;
+}
+
+button.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+button.danger {
+  background: rgba(255, 107, 107, 0.12);
+  color: #ffd7d7;
+  border: 1px solid rgba(255, 107, 107, 0.25);
+}
+
+.app-shell {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(17, 47, 38, 0.75);
+  box-shadow: 0 18px 32px var(--shadow);
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.12rem;
+  font-size: 0.72rem;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.dashboard {
+  margin-top: 1.3rem;
+  display: grid;
+  grid-template-columns: 1.05fr 1.55fr 1.2fr;
+  gap: 1.1rem;
+}
+
+.panel {
+  background: rgba(18, 55, 45, 0.82);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 1.2rem;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+}
+
+.club-summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.club-badge {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  font-weight: 800;
+  color: #082612;
+  background: linear-gradient(135deg, #fef3a0, var(--green));
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+#leagueName {
+  color: var(--muted);
+  margin-top: 0.4rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  padding: 1rem 0;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.9rem 0.8rem;
+}
+
+.stat-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin-bottom: 0.4rem;
+}
+
+.stat-card strong {
+  font-size: 1.1rem;
+}
+
+.action-group {
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.battle-card {
+  margin-top: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.9rem;
+}
+
+.form-line {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.8rem;
+  color: var(--muted);
+}
+
+.main-panel {
+  min-height: 720px;
+}
+
+.panel-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+#weekLabel {
+  color: var(--gold);
+  font-size: 0.9rem;
+}
+
+.roster-container,
+.transfer-list,
+.fixtures-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.player-card,
+.market-card,
+.fixture-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.85rem 0.9rem;
+}
+
+.player-card {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.player-card-header,
+.market-header,
+.fixture-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.player-meta,
+.market-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.player-rating,
+.market-price,
+.fixture-difficulty {
+  min-width: 60px;
+  text-align: center;
+  border-radius: 999px;
+  padding: 0.35rem 0.55rem;
+  font-weight: 700;
+  background: rgba(77, 220, 137, 0.12);
+  color: #dfffe8;
+}
+
+.market-card .buy-btn {
+  margin-top: 0.7rem;
+  width: 100%;
+}
+
+.fixture-card {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.fixture-name {
+  font-weight: 700;
+}
+
+.fixture-status {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.log-block {
+  margin-top: 1rem;
+}
+
+#logList {
+  list-style: none;
+  padding: 0;
+  margin: 0.8rem 0 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
+#logList li {
+  border-left: 3px solid var(--green);
+  background: rgba(255, 255, 255, 0.025);
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 1100px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .main-panel {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

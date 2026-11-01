@@ -1,0 +1,369 @@
+const STORAGE_KEY = 'naija-football-manager-save';
+
+const defaultState = {
+  clubName: 'Lagos City FC',
+  leagueName: 'Nigeria Premier League',
+  budget: 18_000_000,
+  reputation: 62,
+  morale: 74,
+  fans: 42000,
+  points: 0,
+  wins: 0,
+  draws: 0,
+  losses: 0,
+  week: 1,
+  season: 1,
+  teamStrength: 77,
+  currentFixtureIndex: 0,
+  log: [
+    'You have been appointed manager of Lagos City FC. The pressure is on to build a title-winning side.',
+    'Your first task is to steady the squad and get points on the board.'
+  ],
+  players: [
+    { id: 1, name: 'Ayo Balogun', position: 'GK', rating: 78, age: 25, stamina: 82, morale: 80, value: 1_500_000 },
+    { id: 2, name: 'Tunde Adebayo', position: 'RB', rating: 75, age: 24, stamina: 77, morale: 78, value: 1_200_000 },
+    { id: 3, name: 'Eze Nwosu', position: 'CB', rating: 81, age: 27, stamina: 79, morale: 80, value: 2_400_000 },
+    { id: 4, name: 'Musa Ibrahim', position: 'CB', rating: 76, age: 23, stamina: 81, morale: 76, value: 1_600_000 },
+    { id: 5, name: 'Kelechi Okafor', position: 'LB', rating: 74, age: 22, stamina: 75, morale: 74, value: 1_000_000 },
+    { id: 6, name: 'Seyi Lawal', position: 'CM', rating: 82, age: 26, stamina: 84, morale: 83, value: 2_900_000 },
+    { id: 7, name: 'Babatunde Ali', position: 'CM', rating: 79, age: 25, stamina: 80, morale: 81, value: 2_000_000 },
+    { id: 8, name: 'Emmanuel Oke', position: 'RW', rating: 80, age: 24, stamina: 81, morale: 82, value: 2_700_000 },
+    { id: 9, name: 'Nnamdi Akin', position: 'ST', rating: 84, age: 28, stamina: 76, morale: 79, value: 4_000_000 },
+    { id: 10, name: 'Chibuzor Eze', position: 'LW', rating: 81, age: 25, stamina: 78, morale: 80, value: 3_000_000 },
+    { id: 11, name: 'Ifeanyi Udo', position: 'AM', rating: 83, age: 27, stamina: 83, morale: 84, value: 3_900_000 }
+  ],
+  fixtures: [
+    { opponent: 'Kano Pillars', home: true, difficulty: 77, venue: 'Home', status: 'Upcoming' },
+    { opponent: 'Enugu Rangers', home: false, difficulty: 81, venue: 'Away', status: 'Upcoming' },
+    { opponent: 'Akwa United', home: true, difficulty: 74, venue: 'Home', status: 'Upcoming' },
+    { opponent: 'Plateau United', home: false, difficulty: 79, venue: 'Away', status: 'Upcoming' },
+    { opponent: 'Abia Warriors', home: true, difficulty: 72, venue: 'Home', status: 'Upcoming' },
+    { opponent: 'Remo Stars', home: false, difficulty: 83, venue: 'Away', status: 'Upcoming' }
+  ],
+  transferMarket: [
+    { id: 101, name: 'Daniel Okon', position: 'ST', rating: 76, askingPrice: 2_500_000, age: 25 },
+    { id: 102, name: 'Yemi Folarin', position: 'CM', rating: 75, askingPrice: 2_100_000, age: 23 },
+    { id: 103, name: 'Femi Owolabi', position: 'CB', rating: 74, askingPrice: 1_800_000, age: 22 },
+    { id: 104, name: 'Stanley Bassey', position: 'RW', rating: 77, askingPrice: 2_700_000, age: 24 },
+    { id: 105, name: 'Umar Musa', position: 'GK', rating: 73, askingPrice: 1_400_000, age: 21 }
+  ]
+};
+
+let state = loadState();
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function formatMoney(value) {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    maximumFractionDigits: 0
+  }).format(value);
+}
+
+function averageTeamRating() {
+  if (!state.players.length) return 0;
+  const total = state.players.reduce((sum, player) => sum + player.rating, 0);
+  return Math.round(total / state.players.length);
+}
+
+function getTeamStrength() {
+  const avgRating = averageTeamRating();
+  const avgStamina = Math.round(state.players.reduce((sum, player) => sum + player.stamina, 0) / state.players.length);
+  const avgMorale = Math.round(state.players.reduce((sum, player) => sum + player.morale, 0) / state.players.length);
+  return clamp(Math.round((avgRating * 0.7) + (avgStamina * 0.2) + (avgMorale * 0.1)), 50, 95);
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadState() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) {
+    return structuredClone(defaultState);
+  }
+
+  try {
+    return JSON.parse(saved);
+  } catch (error) {
+    return structuredClone(defaultState);
+  }
+}
+
+function addLog(message) {
+  state.log.unshift(message);
+  state.log = state.log.slice(0, 9);
+}
+
+function getNextFixture() {
+  if (state.currentFixtureIndex >= state.fixtures.length) {
+    return null;
+  }
+  return state.fixtures[state.currentFixtureIndex];
+}
+
+function renderStats() {
+  const teamStrength = getTeamStrength();
+  state.teamStrength = teamStrength;
+
+  document.getElementById('clubName').textContent = state.clubName;
+  document.getElementById('budgetValue').textContent = formatMoney(state.budget);
+  document.getElementById('reputationValue').textContent = `${state.reputation}`;
+  document.getElementById('moraleValue').textContent = `${state.morale}`;
+  document.getElementById('fansValue').textContent = `${state.fans.toLocaleString()}`;
+  document.getElementById('pointsValue').textContent = `${state.points}`;
+  document.getElementById('recordValue').textContent = `${state.wins}-${state.draws}-${state.losses}`;
+  document.getElementById('weekLabel').textContent = `Week ${state.week}`;
+  document.getElementById('teamStrengthValue').textContent = `${teamStrength}`;
+
+  const nextFixture = getNextFixture();
+  document.getElementById('nextFixtureValue').textContent = nextFixture
+    ? `${nextFixture.home ? 'vs' : '@'} ${nextFixture.opponent}`
+    : 'Season complete';
+}
+
+function renderRoster() {
+  const container = document.getElementById('rosterContainer');
+  container.innerHTML = '';
+
+  state.players.forEach((player) => {
+    const card = document.createElement('div');
+    card.className = 'player-card';
+    card.innerHTML = `
+      <div class="player-card-header">
+        <div>
+          <strong>${player.name}</strong>
+        </div>
+        <span class="player-rating">${player.rating}</span>
+      </div>
+      <div class="player-meta">
+        <span>${player.position}</span>
+        <span>Age ${player.age}</span>
+        <span>Stamina ${player.stamina}</span>
+        <span>Morale ${player.morale}</span>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function renderTransferMarket() {
+  const container = document.getElementById('transferMarket');
+  container.innerHTML = '';
+
+  state.transferMarket.forEach((player) => {
+    const card = document.createElement('div');
+    card.className = 'market-card';
+    card.innerHTML = `
+      <div class="market-header">
+        <strong>${player.name}</strong>
+        <span class="market-price">${player.rating}</span>
+      </div>
+      <div class="market-meta">
+        <span>${player.position}</span>
+        <span>Age ${player.age}</span>
+      </div>
+      <div class="market-meta">
+        <span>Price: ${formatMoney(player.askingPrice)}</span>
+      </div>
+      <button class="primary buy-btn" data-player-id="${player.id}">Buy Player</button>
+    `;
+    container.appendChild(card);
+  });
+
+  container.querySelectorAll('.buy-btn').forEach((button) => {
+    button.addEventListener('click', () => {
+      buyPlayer(Number(button.dataset.playerId));
+    });
+  });
+}
+
+function renderFixtures() {
+  const container = document.getElementById('fixturesContainer');
+  container.innerHTML = '';
+
+  state.fixtures.forEach((fixture, index) => {
+    const isCurrent = index === state.currentFixtureIndex;
+    const card = document.createElement('div');
+    card.className = 'fixture-card';
+    card.innerHTML = `
+      <div class="fixture-header">
+        <span class="fixture-name">${fixture.home ? 'vs' : '@'} ${fixture.opponent}</span>
+        <span class="fixture-difficulty">${fixture.difficulty}</span>
+      </div>
+      <div class="fixture-status">${fixture.venue} • ${isCurrent ? 'Next up' : 'Scheduled'}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function renderLog() {
+  const list = document.getElementById('logList');
+  list.innerHTML = '';
+
+  state.log.forEach((entry) => {
+    const item = document.createElement('li');
+    item.textContent = entry;
+    list.appendChild(item);
+  });
+}
+
+function render() {
+  renderStats();
+  renderRoster();
+  renderTransferMarket();
+  renderFixtures();
+  renderLog();
+  saveState();
+}
+
+function trainSquad() {
+  const playersBoosted = state.players.map((player) => ({
+    ...player,
+    stamina: clamp(player.stamina + Math.floor(Math.random() * 6 + 2), 50, 99),
+    morale: clamp(player.morale + Math.floor(Math.random() * 5 + 2), 55, 99)
+  }));
+
+  state.players = playersBoosted;
+  state.morale = clamp(state.morale + 5, 50, 99);
+  state.reputation = clamp(state.reputation + 1, 0, 100);
+  state.budget -= 250_000;
+  addLog('Training camp boosts the squad fitness and confidence ahead of the next match.');
+  render();
+}
+
+function scoutTalent() {
+  const topTalent = {
+    id: Date.now(),
+    name: `Young Star ${Math.floor(Math.random() * 900 + 100)}`,
+    position: ['ST', 'CM', 'CB', 'RW', 'GK'][Math.floor(Math.random() * 5)],
+    rating: 72 + Math.floor(Math.random() * 9),
+    age: 18 + Math.floor(Math.random() * 5),
+    askingPrice: 900_000 + Math.floor(Math.random() * 2_500_000)
+  };
+
+  state.transferMarket.push(topTalent);
+  addLog(`Scouting reports identify a promising youngster: ${topTalent.name}, a ${topTalent.position} with ${topTalent.rating} potential.`);
+  render();
+}
+
+function buyPlayer(playerId) {
+  const player = state.transferMarket.find((item) => item.id === playerId);
+  if (!player) {
+    return;
+  }
+
+  if (state.budget < player.askingPrice) {
+    addLog(`The club cannot afford ${player.name} right now. Budget is too tight.`);
+    render();
+    return;
+  }
+
+  state.budget -= player.askingPrice;
+  state.players.push({
+    id: Date.now(),
+    name: player.name,
+    position: player.position,
+    rating: player.rating,
+    age: player.age,
+    stamina: 70 + Math.floor(Math.random() * 20),
+    morale: 70 + Math.floor(Math.random() * 20),
+    value: player.askingPrice
+  });
+
+  state.transferMarket = state.transferMarket.filter((item) => item.id !== playerId);
+  addLog(`${player.name} joins the club for ${formatMoney(player.askingPrice)}.`);
+  render();
+}
+
+function simulateMatch() {
+  const fixture = getNextFixture();
+  if (!fixture) {
+    addLog('The league season is over. You have completed all your fixtures.');
+    render();
+    return;
+  }
+
+  const teamStrength = getTeamStrength();
+  const opponentStrength = fixture.difficulty;
+  const homeBonus = fixture.home ? 3 : 0;
+
+  const yourScore = Math.max(0, Math.round(Math.random() * 2 + (teamStrength - opponentStrength) / 12 + homeBonus / 5));
+  const oppScore = Math.max(0, Math.round(Math.random() * 2 + (opponentStrength - teamStrength) / 15 + (fixture.home ? 0 : 1)));
+
+  const resultScore = {
+    your: yourScore,
+    opp: oppScore
+  };
+
+  fixture.status = 'Played';
+  state.week += 1;
+
+  if (yourScore > oppScore) {
+    state.wins += 1;
+    state.points += 3;
+    state.budget += 400_000 + Math.floor(Math.random() * 600_000);
+    state.morale = clamp(state.morale + 8, 50, 99);
+    state.reputation = clamp(state.reputation + 2, 0, 100);
+    addLog(`Victory! Lagos City FC beat ${fixture.opponent} ${yourScore}-${oppScore}. The crowd is buzzing.`);
+  } else if (yourScore < oppScore) {
+    state.losses += 1;
+    state.morale = clamp(state.morale - 6, 50, 99);
+    state.reputation = clamp(state.reputation - 1, 0, 100);
+    addLog(`Defeat! ${fixture.opponent} win ${oppScore}-${yourScore}. Tactical changes are needed.`);
+  } else {
+    state.draws += 1;
+    state.points += 1;
+    state.morale = clamp(state.morale + 2, 50, 99);
+    addLog(`A draw against ${fixture.opponent}. It is a fair result after a hard-fought match.`);
+  }
+
+  state.fans = Math.max(20000, state.fans + (yourScore > oppScore ? 1200 : 300));
+  state.currentFixtureIndex += 1;
+
+  if (state.currentFixtureIndex >= state.fixtures.length) {
+    addLog(`The league campaign ends with ${state.points} points. The club now looks ahead to next season.`);
+  }
+
+  render();
+}
+
+function advanceWeek() {
+  state.week += 1;
+  state.players = state.players.map((player) => ({
+    ...player,
+    morale: clamp(player.morale + Math.floor(Math.random() * 4) - 1, 50, 99),
+    stamina: clamp(player.stamina + Math.floor(Math.random() * 3), 50, 99)
+  }));
+  state.morale = clamp(state.morale + 1, 50, 99);
+  addLog('The week passes and the squad settles into routine training and media duties.');
+  render();
+}
+
+function resetGame() {
+  state = structuredClone(defaultState);
+  addLog('A new era begins at Lagos City FC. The club is ready for a fresh challenge.');
+  render();
+}
+
+function init() {
+  document.getElementById('trainBtn').addEventListener('click', trainSquad);
+  document.getElementById('playBtn').addEventListener('click', simulateMatch);
+  document.getElementById('weekBtn').addEventListener('click', advanceWeek);
+  document.getElementById('scoutBtn').addEventListener('click', scoutTalent);
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    saveState();
+    addLog('Game saved successfully.');
+    render();
+  });
+  document.getElementById('resetBtn').addEventListener('click', resetGame);
+
+  render();
+}
+
+init();
+
+window.addEventListener('beforeunload', saveState);

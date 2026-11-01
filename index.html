@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Naija Football Manager</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Nigeria Premier League</p>
+          <h1>Naija Football Manager</h1>
+        </div>
+        <div class="header-actions">
+          <button id="saveBtn" class="secondary">Save Game</button>
+          <button id="resetBtn" class="danger">Reset</button>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <aside class="panel left-panel">
+          <section class="club-summary">
+            <div class="club-badge">LC</div>
+            <div>
+              <h2 id="clubName">Lagos City FC</h2>
+              <p id="leagueName">Nigeria Premier League</p>
+            </div>
+          </section>
+
+          <section class="stats-grid">
+            <div class="stat-card">
+              <span>Budget</span>
+              <strong id="budgetValue">₦0</strong>
+            </div>
+            <div class="stat-card">
+              <span>Reputation</span>
+              <strong id="reputationValue">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>Morale</span>
+              <strong id="moraleValue">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>Fans</span>
+              <strong id="fansValue">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>Points</span>
+              <strong id="pointsValue">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>W-D-L</span>
+              <strong id="recordValue">0-0-0</strong>
+            </div>
+          </section>
+
+          <section class="action-group">
+            <h3>Club Actions</h3>
+            <button id="trainBtn" class="primary">Train Squad</button>
+            <button id="playBtn" class="primary">Play Next Match</button>
+            <button id="weekBtn" class="secondary">Advance Week</button>
+            <button id="scoutBtn" class="secondary">Scout Talent</button>
+          </section>
+
+          <section class="battle-card">
+            <h3>Current Form</h3>
+            <div class="form-line">
+              <span>Team Strength</span>
+              <strong id="teamStrengthValue">0</strong>
+            </div>
+            <div class="form-line">
+              <span>Next Fixture</span>
+              <strong id="nextFixtureValue">No fixture</strong>
+            </div>
+          </section>
+        </aside>
+
+        <section class="panel main-panel">
+          <div class="panel-title-row">
+            <h3>Squad</h3>
+            <span id="weekLabel">Week 1</span>
+          </div>
+          <div id="rosterContainer" class="roster-container"></div>
+        </section>
+
+        <aside class="panel right-panel">
+          <section>
+            <h3>Transfer Market</h3>
+            <div id="transferMarket" class="transfer-list"></div>
+          </section>
+
+          <section class="fixtures-block">
+            <h3>Fixtures</h3>
+            <div id="fixturesContainer" class="fixtures-list"></div>
+          </section>
+
+          <section class="log-block">
+            <h3>Manager Log</h3>
+            <ul id="logList"></ul>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
