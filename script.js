@@ -46,10 +46,24 @@ const defaultState = {
     { id: 103, name: 'Femi Owolabi', position: 'CB', rating: 74, askingPrice: 1_800_000, age: 22 },
     { id: 104, name: 'Stanley Bassey', position: 'RW', rating: 77, askingPrice: 2_700_000, age: 24 },
     { id: 105, name: 'Umar Musa', position: 'GK', rating: 73, askingPrice: 1_400_000, age: 21 }
-  ]
+  ],
+  leagueTable: [
+    { team: 'Lagos City FC', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Kano Pillars', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Enugu Rangers', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Akwa United', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Plateau United', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Abia Warriors', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Remo Stars', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Rivers United', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 }
+  ],
+  currentMatch: null,
+  matchRunning: false,
+  matchStatus: 'Kick off'
 };
 
 let state = loadState();
+let animationFrameId = null;
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -103,6 +117,38 @@ function getNextFixture() {
     return null;
   }
   return state.fixtures[state.currentFixtureIndex];
+}
+
+function getLeagueTeam(teamName) {
+  return state.leagueTable.find((team) => team.team === teamName) || null;
+}
+
+function formatLeaguePosition(position) {
+  if (position === 1) return '1st';
+  if (position === 2) return '2nd';
+  if (position === 3) return '3rd';
+  return `${position}th`;
+}
+
+function updateLeagueTable(teamName, goalsFor, goalsAgainst, resultType) {
+  const entry = getLeagueTeam(teamName);
+  if (!entry) {
+    return;
+  }
+
+  entry.played += 1;
+  entry.gf += goalsFor;
+  entry.ga += goalsAgainst;
+
+  if (resultType === 'win') {
+    entry.wins += 1;
+    entry.pts += 3;
+  } else if (resultType === 'draw') {
+    entry.draws += 1;
+    entry.pts += 1;
+  } else {
+    entry.losses += 1;
+  }
 }
 
 function renderStats() {
@@ -200,6 +246,28 @@ function renderFixtures() {
   });
 }
 
+function renderLeagueTable() {
+  const tbody = document.getElementById('leagueTableBody');
+  const rows = [...state.leagueTable].sort((a, b) => {
+    if (b.pts !== a.pts) return b.pts - a.pts;
+    const gdA = a.gf - a.ga;
+    const gdB = b.gf - b.ga;
+    if (gdB !== gdA) return gdB - gdA;
+    return b.gf - a.gf;
+  });
+
+  tbody.innerHTML = rows
+    .map((team, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${team.team}</td>
+        <td>${team.played}</td>
+        <td>${team.pts}</td>
+      </tr>
+    `)
+    .join('');
+}
+
 function renderLog() {
   const list = document.getElementById('logList');
   list.innerHTML = '';
@@ -211,12 +279,32 @@ function renderLog() {
   });
 }
 
+function renderMatchOverlay() {
+  const homeScore = document.getElementById('homeScore');
+  const awayScore = document.getElementById('awayScore');
+  const matchStatus = document.getElementById('matchStatusText');
+  const matchState = state.currentMatch;
+
+  if (!matchState) {
+    homeScore.textContent = '0';
+    awayScore.textContent = '0';
+    matchStatus.textContent = 'Kick off';
+    return;
+  }
+
+  homeScore.textContent = `${matchState.scoreHome}`;
+  awayScore.textContent = `${matchState.scoreAway}`;
+  matchStatus.textContent = state.matchStatus;
+}
+
 function render() {
   renderStats();
   renderRoster();
   renderTransferMarket();
   renderFixtures();
+  renderLeagueTable();
   renderLog();
+  renderMatchOverlay();
   saveState();
 }
 
@@ -279,6 +367,357 @@ function buyPlayer(playerId) {
   render();
 }
 
+function generateGoalTimes(homeGoals, awayGoals) {
+  const timeline = [];
+
+  const makeGoal = (team, goals) => {
+    for (let i = 0; i < goals; i += 1) {
+      timeline.push({
+        team,
+        time: 18 + Math.random() * 80,
+        triggered: false
+      });
+    }
+  };
+
+  makeGoal('home', homeGoals);
+  makeGoal('away', awayGoals);
+  return timeline.sort((a, b) => a.time - b.time);
+}
+
+function createMatch(fixture) {
+  const homeStrength = getTeamStrength();
+  const awayStrength = fixture.difficulty;
+  const homeGoalBias = clamp(homeStrength - awayStrength, -12, 12);
+  const likelyHomeGoals = Math.max(0, Math.round(1.2 + homeGoalBias / 12 + Math.random() * 1.5));
+  const likelyAwayGoals = Math.max(0, Math.round(0.8 + (awayStrength - homeStrength) / 16 + Math.random() * 1.3));
+  const actualHomeGoals = Math.min(5, likelyHomeGoals + (Math.random() < 0.15 ? 1 : 0));
+  const actualAwayGoals = Math.min(5, likelyAwayGoals + (Math.random() < 0.15 ? 1 : 0));
+
+  const teamColors = {
+    home: '#44d37a',
+    away: '#f6d365',
+    ball: '#fdf8ee'
+  };
+
+  return {
+    fixture,
+    homeName: state.clubName,
+    awayName: fixture.opponent,
+    homeStrength,
+    awayStrength,
+    scoreHome: 0,
+    scoreAway: 0,
+    finalHomeScore: actualHomeGoals,
+    finalAwayScore: actualAwayGoals,
+    goalTimeline: generateGoalTimes(actualHomeGoals, actualAwayGoals),
+    playing: true,
+    elapsed: 0,
+    lastTimestamp: performance.now(),
+    teams: {
+      home: createTeamPlayers(true, teamColors.home),
+      away: createTeamPlayers(false, teamColors.away)
+    },
+    ball: {
+      x: 430,
+      y: 260,
+      radius: 7,
+      vx: 0,
+      vy: 0,
+      owner: null,
+      lastTouchedBy: 'home'
+    },
+    colorScheme: teamColors
+  };
+}
+
+function createTeamPlayers(isHome, color) {
+  const baseX = isHome ? 140 : 720;
+  const players = [
+    { x: baseX, y: 260, radius: 12, color, label: 'GK' },
+    { x: baseX + 80, y: 80, radius: 10, color, label: 'RB' },
+    { x: baseX + 80, y: 180, radius: 10, color, label: 'CB' },
+    { x: baseX + 80, y: 340, radius: 10, color, label: 'CB' },
+    { x: baseX + 80, y: 440, radius: 10, color, label: 'LB' },
+    { x: baseX + 150, y: 120, radius: 10, color, label: 'CM' },
+    { x: baseX + 150, y: 220, radius: 10, color, label: 'CM' },
+    { x: baseX + 150, y: 300, radius: 10, color, label: 'CM' },
+    { x: baseX + 150, y: 400, radius: 10, color, label: 'RW' },
+    { x: baseX + 220, y: 180, radius: 12, color, label: 'ST' },
+    { x: baseX + 220, y: 340, radius: 12, color, label: 'ST' }
+  ];
+
+  if (!isHome) {
+    players.forEach((player) => {
+      player.x = 860 - player.x;
+      player.y = 520 - player.y;
+    });
+  }
+
+  return players;
+}
+
+function drawPitch() {
+  const canvas = document.getElementById('matchCanvas');
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    return;
+  }
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = '#1a8d47';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+  ctx.beginPath();
+  ctx.moveTo(canvas.width / 2, 20);
+  ctx.lineTo(canvas.width / 2, canvas.height - 20);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(canvas.width / 2, canvas.height / 2, 80, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.strokeRect(20, 150, 58, 220);
+  ctx.strokeRect(canvas.width - 78, 150, 58, 220);
+  ctx.strokeRect(20, 220, 20, 80);
+  ctx.strokeRect(canvas.width - 40, 220, 20, 80);
+
+  ctx.fillStyle = '#bfecc3';
+  ctx.font = '18px Arial';
+  ctx.fillText('Lagos City FC', 24, 35);
+  ctx.fillText('Away', canvas.width - 100, 35);
+}
+
+function drawMatchFrame() {
+  const canvas = document.getElementById('matchCanvas');
+  const ctx = canvas.getContext('2d');
+  const match = state.currentMatch;
+
+  if (!match) {
+    return;
+  }
+
+  drawPitch();
+
+  const { ball, teams } = match;
+  const ballColor = match.colorScheme.ball;
+
+  Object.values(teams).forEach((team) => {
+    team.forEach((player) => {
+      ctx.beginPath();
+      ctx.fillStyle = player.color;
+      ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#0c2b1a';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#0a2b1c';
+      ctx.font = '10px Arial';
+      ctx.fillText(player.label, player.x - 8, player.y + 3);
+    });
+  });
+
+  ctx.beginPath();
+  ctx.fillStyle = ballColor;
+  ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 22px Arial';
+  ctx.fillText(`${match.scoreHome} - ${match.scoreAway}`, canvas.width / 2 - 26, 42);
+}
+
+function updateMatchAnimation() {
+  const match = state.currentMatch;
+  if (!match) {
+    return;
+  }
+
+  const now = performance.now();
+  const dt = (now - match.lastTimestamp) / 1000;
+  match.lastTimestamp = now;
+  match.elapsed += dt;
+
+  if (match.goalTimeline.length) {
+    const nextGoal = match.goalTimeline.find((goal) => !goal.triggered && match.elapsed >= goal.time);
+    if (nextGoal) {
+      nextGoal.triggered = true;
+      if (nextGoal.team === 'home') {
+        match.scoreHome += 1;
+      } else {
+        match.scoreAway += 1;
+      }
+      state.matchStatus = `${match.homeName} ${match.scoreHome} - ${match.scoreAway} ${match.awayName}`;
+    }
+  }
+
+  const movementSpeed = 36;
+  const homeTeam = match.teams.home;
+  const awayTeam = match.teams.away;
+
+  homeTeam.forEach((player, index) => {
+    const targetX = 130 + (index % 3) * 55 + Math.sin(match.elapsed * 1.5 + index) * 12;
+    const targetY = 90 + (index * 37) % 360;
+    player.x += (targetX - player.x) * 0.08;
+    player.y += (targetY - player.y) * 0.08;
+  });
+
+  awayTeam.forEach((player, index) => {
+    const targetX = 730 - (index % 3) * 55 + Math.cos(match.elapsed * 1.5 + index) * 12;
+    const targetY = 430 - (index * 31) % 360;
+    player.x += (targetX - player.x) * 0.08;
+    player.y += (targetY - player.y) * 0.08;
+  });
+
+  const attackingHome = match.scoreHome <= match.scoreAway ? homeTeam : awayTeam;
+  const ballOwner = attackingHome[Math.floor((match.elapsed * 2) % attackingHome.length)];
+  match.ball.x += (ballOwner.x - match.ball.x) * 0.09 * movementSpeed * dt;
+  match.ball.y += (ballOwner.y - match.ball.y) * 0.09 * movementSpeed * dt;
+
+  if (match.elapsed > 110) {
+    finalizeMatch();
+    return;
+  }
+
+  drawMatchFrame();
+  animationFrameId = requestAnimationFrame(updateMatchAnimation);
+}
+
+function finalizeMatch() {
+  if (!state.currentMatch) {
+    return;
+  }
+
+  const match = state.currentMatch;
+  const fixture = match.fixture;
+  const homeGoals = match.scoreHome;
+  const awayGoals = match.scoreAway;
+
+  if (homeGoals > awayGoals) {
+    state.wins += 1;
+    state.points += 3;
+    state.budget += 400_000 + Math.floor(Math.random() * 600_000);
+    state.morale = clamp(state.morale + 8, 50, 99);
+    state.reputation = clamp(state.reputation + 2, 0, 100);
+    addLog(`Victory! Lagos City FC beat ${fixture.opponent} ${homeGoals}-${awayGoals}. The crowd is buzzing.`);
+    updateLeagueTable(state.clubName, homeGoals, awayGoals, 'win');
+    updateLeagueTable(fixture.opponent, awayGoals, homeGoals, 'loss');
+  } else if (homeGoals < awayGoals) {
+    state.losses += 1;
+    state.morale = clamp(state.morale - 6, 50, 99);
+    state.reputation = clamp(state.reputation - 1, 0, 100);
+    addLog(`Defeat! ${fixture.opponent} win ${awayGoals}-${homeGoals}. Tactical changes are needed.`);
+    updateLeagueTable(state.clubName, homeGoals, awayGoals, 'loss');
+    updateLeagueTable(fixture.opponent, awayGoals, homeGoals, 'win');
+  } else {
+    state.draws += 1;
+    state.points += 1;
+    state.morale = clamp(state.morale + 2, 50, 99);
+    addLog(`A draw against ${fixture.opponent}. It is a fair result after a hard-fought match.`);
+    updateLeagueTable(state.clubName, homeGoals, awayGoals, 'draw');
+    updateLeagueTable(fixture.opponent, awayGoals, homeGoals, 'draw');
+  }
+
+  state.fans = Math.max(20000, state.fans + (homeGoals > awayGoals ? 1200 : 300));
+  state.currentFixtureIndex += 1;
+  state.matchRunning = false;
+  state.matchStatus = `${fixture.opponent} ${awayGoals}-${homeGoals} Lagos City FC`;
+  state.currentMatch = null;
+  state.week += 1;
+
+  if (state.currentFixtureIndex >= state.fixtures.length) {
+    addLog(`The league campaign ends with ${state.points} points. The club now looks ahead to next season.`);
+  }
+
+  render();
+}
+
+function start2DMatch() {
+  const fixture = getNextFixture();
+  if (!fixture) {
+    addLog('The league season is over. You have completed all your fixtures.');
+    render();
+    return;
+  }
+
+  if (state.matchRunning) {
+    return;
+  }
+
+  state.matchRunning = true;
+  state.matchStatus = 'Kick off';
+  state.currentMatch = createMatch(fixture);
+  renderMatchOverlay();
+  drawMatchFrame();
+  animationFrameId = requestAnimationFrame(updateMatchAnimation);
+}
+
+function quickResult() {
+  const fixture = getNextFixture();
+  if (!fixture) {
+    addLog('No fixtures remain this season.');
+    render();
+    return;
+  }
+
+  if (state.matchRunning) {
+    cancelAnimationFrame(animationFrameId);
+    state.matchRunning = false;
+  }
+
+  const teamStrength = getTeamStrength();
+  const opponentStrength = fixture.difficulty;
+  const homeBoost = fixture.home ? 2 : 0;
+
+  let homeGoals = 0;
+  let awayGoals = 0;
+
+  const baseGoalChance = clamp(teamStrength + homeBoost - opponentStrength, -12, 18);
+  const homeChance = Math.max(0.25, 0.5 + baseGoalChance / 50);
+  const awayChance = Math.max(0.2, 0.45 - baseGoalChance / 70);
+
+  for (let i = 0; i < 4; i += 1) {
+    if (Math.random() < homeChance / 2) homeGoals += 1;
+    if (Math.random() < awayChance / 2) awayGoals += 1;
+  }
+
+  homeGoals = Math.min(homeGoals, 5);
+  awayGoals = Math.min(awayGoals, 5);
+
+  if (homeGoals === 0 && awayGoals === 0 && Math.random() < 0.2) {
+    homeGoals += 1;
+  }
+
+  state.currentMatch = {
+    fixture,
+    homeName: state.clubName,
+    awayName: fixture.opponent,
+    scoreHome: homeGoals,
+    scoreAway: awayGoals,
+    finalHomeScore: homeGoals,
+    finalAwayScore: awayGoals,
+    playing: false,
+    elapsed: 120,
+    teams: {
+      home: createTeamPlayers(true, '#44d37a'),
+      away: createTeamPlayers(false, '#f6d365')
+    },
+    ball: { x: 430, y: 260, radius: 7 },
+    colorScheme: { home: '#44d37a', away: '#f6d365', ball: '#fdf8ee' }
+  };
+
+  state.matchStatus = `${fixture.opponent} ${awayGoals}-${homeGoals} Lagos City FC`;
+  renderMatchOverlay();
+  drawMatchFrame();
+  finalizeMatch();
+}
+
 function simulateMatch() {
   const fixture = getNextFixture();
   if (!fixture) {
@@ -287,48 +726,7 @@ function simulateMatch() {
     return;
   }
 
-  const teamStrength = getTeamStrength();
-  const opponentStrength = fixture.difficulty;
-  const homeBonus = fixture.home ? 3 : 0;
-
-  const yourScore = Math.max(0, Math.round(Math.random() * 2 + (teamStrength - opponentStrength) / 12 + homeBonus / 5));
-  const oppScore = Math.max(0, Math.round(Math.random() * 2 + (opponentStrength - teamStrength) / 15 + (fixture.home ? 0 : 1)));
-
-  const resultScore = {
-    your: yourScore,
-    opp: oppScore
-  };
-
-  fixture.status = 'Played';
-  state.week += 1;
-
-  if (yourScore > oppScore) {
-    state.wins += 1;
-    state.points += 3;
-    state.budget += 400_000 + Math.floor(Math.random() * 600_000);
-    state.morale = clamp(state.morale + 8, 50, 99);
-    state.reputation = clamp(state.reputation + 2, 0, 100);
-    addLog(`Victory! Lagos City FC beat ${fixture.opponent} ${yourScore}-${oppScore}. The crowd is buzzing.`);
-  } else if (yourScore < oppScore) {
-    state.losses += 1;
-    state.morale = clamp(state.morale - 6, 50, 99);
-    state.reputation = clamp(state.reputation - 1, 0, 100);
-    addLog(`Defeat! ${fixture.opponent} win ${oppScore}-${yourScore}. Tactical changes are needed.`);
-  } else {
-    state.draws += 1;
-    state.points += 1;
-    state.morale = clamp(state.morale + 2, 50, 99);
-    addLog(`A draw against ${fixture.opponent}. It is a fair result after a hard-fought match.`);
-  }
-
-  state.fans = Math.max(20000, state.fans + (yourScore > oppScore ? 1200 : 300));
-  state.currentFixtureIndex += 1;
-
-  if (state.currentFixtureIndex >= state.fixtures.length) {
-    addLog(`The league campaign ends with ${state.points} points. The club now looks ahead to next season.`);
-  }
-
-  render();
+  start2DMatch();
 }
 
 function advanceWeek() {
@@ -352,6 +750,8 @@ function resetGame() {
 function init() {
   document.getElementById('trainBtn').addEventListener('click', trainSquad);
   document.getElementById('playBtn').addEventListener('click', simulateMatch);
+  document.getElementById('startMatchBtn').addEventListener('click', start2DMatch);
+  document.getElementById('quickResultBtn').addEventListener('click', quickResult);
   document.getElementById('weekBtn').addEventListener('click', advanceWeek);
   document.getElementById('scoutBtn').addEventListener('click', scoutTalent);
   document.getElementById('saveBtn').addEventListener('click', () => {
@@ -362,6 +762,7 @@ function init() {
   document.getElementById('resetBtn').addEventListener('click', resetGame);
 
   render();
+  drawPitch();
 }
 
 init();

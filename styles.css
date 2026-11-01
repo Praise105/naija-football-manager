@@ -266,6 +266,75 @@ h1 {
   font-size: 0.82rem;
 }
 
+.match-view {
+  margin-top: 1.1rem;
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(8, 30, 23, 0.7);
+}
+
+.pitch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.match-kicker {
+  display: block;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.08rem;
+  font-size: 0.72rem;
+}
+
+.scoreboard {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+#matchCanvas {
+  display: block;
+  width: 100%;
+  max-width: 860px;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, #0d6635 0%, #0f7a3d 100%);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.14);
+}
+
+.match-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 0.9rem;
+}
+
+.league-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.8rem;
+  font-size: 0.88rem;
+}
+
+.league-table th,
+.league-table td {
+  padding: 0.5rem 0.35rem;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.league-block,
 .log-block {
   margin-top: 1rem;
 }
@@ -312,5 +381,9 @@ h1 {
 
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .match-controls {
+    flex-direction: column;
   }
 }

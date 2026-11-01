@@ -83,6 +83,25 @@
             <span id="weekLabel">Week 1</span>
           </div>
           <div id="rosterContainer" class="roster-container"></div>
+
+          <div id="matchView" class="match-view">
+            <div class="pitch-header">
+              <div>
+                <span class="match-kicker">Matchday</span>
+                <strong id="matchStatusText">Kick off</strong>
+              </div>
+              <div class="scoreboard">
+                <span id="homeScore">0</span>
+                <span>:</span>
+                <span id="awayScore">0</span>
+              </div>
+            </div>
+            <canvas id="matchCanvas" width="860" height="520"></canvas>
+            <div class="match-controls">
+              <button id="startMatchBtn" class="primary">Start 2D Match</button>
+              <button id="quickResultBtn" class="secondary">Quick Result</button>
+            </div>
+          </div>
         </section>
 
         <aside class="panel right-panel">
@@ -94,6 +113,21 @@
           <section class="fixtures-block">
             <h3>Fixtures</h3>
             <div id="fixturesContainer" class="fixtures-list"></div>
+          </section>
+
+          <section class="league-block">
+            <h3>League Table</h3>
+            <table class="league-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Team</th>
+                  <th>P</th>
+                  <th>Pts</th>
+                </tr>
+              </thead>
+              <tbody id="leagueTableBody"></tbody>
+            </table>
           </section>
 
           <section class="log-block">
