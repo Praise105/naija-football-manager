@@ -19,7 +19,14 @@
         </div>
       </header>
 
-      <main class="dashboard">
+      <nav class="page-nav" aria-label="Main navigation">
+        <button class="page-tab active" data-page="dashboard" type="button">Overview</button>
+        <button class="page-tab" data-page="tactics" type="button">Tactics</button>
+        <button class="page-tab" data-page="formations" type="button">Formations</button>
+        <button class="page-tab" data-page="transfer-market" type="button">Transfer Market</button>
+      </nav>
+
+      <main id="dashboardPage" class="dashboard page-section active">
         <aside class="panel left-panel">
           <section class="club-summary">
             <div class="club-badge">LC</div>
@@ -180,6 +187,30 @@
           </section>
         </aside>
       </main>
+
+      <section id="tacticsPage" class="page-section content-page">
+        <div class="page-header">
+          <h2>Tactics</h2>
+          <p>Set your match plan and coaching identity.</p>
+        </div>
+        <div id="tacticsPageContent" class="page-grid"></div>
+      </section>
+
+      <section id="formationsPage" class="page-section content-page">
+        <div class="page-header">
+          <h2>Formations</h2>
+          <p>Choose the structure that suits your current squad strength.</p>
+        </div>
+        <div id="formationsPageContent" class="page-grid"></div>
+      </section>
+
+      <section id="transferMarketPage" class="page-section content-page">
+        <div class="page-header">
+          <h2>Transfer Market</h2>
+          <p>Find new talent, negotiate smart deals, and strengthen the squad.</p>
+        </div>
+        <div id="transferMarketPageContent" class="page-grid"></div>
+      </section>
     </div>
 
     <script src="script.js"></script>
