@@ -1,5 +1,14 @@
 const STORAGE_KEY = 'naija-football-manager-save';
 
+const baseFixtures = [
+  { opponent: 'Kano Pillars', home: true, difficulty: 77, venue: 'Home', status: 'Upcoming' },
+  { opponent: 'Enugu Rangers', home: false, difficulty: 81, venue: 'Away', status: 'Upcoming' },
+  { opponent: 'Akwa United', home: true, difficulty: 74, venue: 'Home', status: 'Upcoming' },
+  { opponent: 'Plateau United', home: false, difficulty: 79, venue: 'Away', status: 'Upcoming' },
+  { opponent: 'Abia Warriors', home: true, difficulty: 72, venue: 'Home', status: 'Upcoming' },
+  { opponent: 'Remo Stars', home: false, difficulty: 83, venue: 'Away', status: 'Upcoming' }
+];
+
 const defaultState = {
   clubName: 'Lagos City FC',
   leagueName: 'Nigeria Premier League',
@@ -13,6 +22,7 @@ const defaultState = {
   losses: 0,
   week: 1,
   season: 1,
+  tactic: 'balanced',
   teamStrength: 77,
   currentFixtureIndex: 0,
   log: [
@@ -20,26 +30,19 @@ const defaultState = {
     'Your first task is to steady the squad and get points on the board.'
   ],
   players: [
-    { id: 1, name: 'Ayo Balogun', position: 'GK', rating: 78, age: 25, stamina: 82, morale: 80, value: 1_500_000 },
-    { id: 2, name: 'Tunde Adebayo', position: 'RB', rating: 75, age: 24, stamina: 77, morale: 78, value: 1_200_000 },
-    { id: 3, name: 'Eze Nwosu', position: 'CB', rating: 81, age: 27, stamina: 79, morale: 80, value: 2_400_000 },
-    { id: 4, name: 'Musa Ibrahim', position: 'CB', rating: 76, age: 23, stamina: 81, morale: 76, value: 1_600_000 },
-    { id: 5, name: 'Kelechi Okafor', position: 'LB', rating: 74, age: 22, stamina: 75, morale: 74, value: 1_000_000 },
-    { id: 6, name: 'Seyi Lawal', position: 'CM', rating: 82, age: 26, stamina: 84, morale: 83, value: 2_900_000 },
-    { id: 7, name: 'Babatunde Ali', position: 'CM', rating: 79, age: 25, stamina: 80, morale: 81, value: 2_000_000 },
-    { id: 8, name: 'Emmanuel Oke', position: 'RW', rating: 80, age: 24, stamina: 81, morale: 82, value: 2_700_000 },
-    { id: 9, name: 'Nnamdi Akin', position: 'ST', rating: 84, age: 28, stamina: 76, morale: 79, value: 4_000_000 },
-    { id: 10, name: 'Chibuzor Eze', position: 'LW', rating: 81, age: 25, stamina: 78, morale: 80, value: 3_000_000 },
-    { id: 11, name: 'Ifeanyi Udo', position: 'AM', rating: 83, age: 27, stamina: 83, morale: 84, value: 3_900_000 }
+    { id: 1, name: 'Ayo Balogun', position: 'GK', rating: 78, age: 25, stamina: 82, fitness: 82, morale: 80, value: 1_500_000, injury: 0 },
+    { id: 2, name: 'Tunde Adebayo', position: 'RB', rating: 75, age: 24, stamina: 77, fitness: 77, morale: 78, value: 1_200_000, injury: 0 },
+    { id: 3, name: 'Eze Nwosu', position: 'CB', rating: 81, age: 27, stamina: 79, fitness: 79, morale: 80, value: 2_400_000, injury: 0 },
+    { id: 4, name: 'Musa Ibrahim', position: 'CB', rating: 76, age: 23, stamina: 81, fitness: 81, morale: 76, value: 1_600_000, injury: 0 },
+    { id: 5, name: 'Kelechi Okafor', position: 'LB', rating: 74, age: 22, stamina: 75, fitness: 75, morale: 74, value: 1_000_000, injury: 0 },
+    { id: 6, name: 'Seyi Lawal', position: 'CM', rating: 82, age: 26, stamina: 84, fitness: 84, morale: 83, value: 2_900_000, injury: 0 },
+    { id: 7, name: 'Babatunde Ali', position: 'CM', rating: 79, age: 25, stamina: 80, fitness: 80, morale: 81, value: 2_000_000, injury: 0 },
+    { id: 8, name: 'Emmanuel Oke', position: 'RW', rating: 80, age: 24, stamina: 81, fitness: 81, morale: 82, value: 2_700_000, injury: 0 },
+    { id: 9, name: 'Nnamdi Akin', position: 'ST', rating: 84, age: 28, stamina: 76, fitness: 76, morale: 79, value: 4_000_000, injury: 0 },
+    { id: 10, name: 'Chibuzor Eze', position: 'LW', rating: 81, age: 25, stamina: 78, fitness: 78, morale: 80, value: 3_000_000, injury: 0 },
+    { id: 11, name: 'Ifeanyi Udo', position: 'AM', rating: 83, age: 27, stamina: 83, fitness: 83, morale: 84, value: 3_900_000, injury: 0 }
   ],
-  fixtures: [
-    { opponent: 'Kano Pillars', home: true, difficulty: 77, venue: 'Home', status: 'Upcoming' },
-    { opponent: 'Enugu Rangers', home: false, difficulty: 81, venue: 'Away', status: 'Upcoming' },
-    { opponent: 'Akwa United', home: true, difficulty: 74, venue: 'Home', status: 'Upcoming' },
-    { opponent: 'Plateau United', home: false, difficulty: 79, venue: 'Away', status: 'Upcoming' },
-    { opponent: 'Abia Warriors', home: true, difficulty: 72, venue: 'Home', status: 'Upcoming' },
-    { opponent: 'Remo Stars', home: false, difficulty: 83, venue: 'Away', status: 'Upcoming' }
-  ],
+  fixtures: baseFixtures.map((fixture) => ({ ...fixture })),
   transferMarket: [
     { id: 101, name: 'Daniel Okon', position: 'ST', rating: 76, askingPrice: 2_500_000, age: 25 },
     { id: 102, name: 'Yemi Folarin', position: 'CM', rating: 75, askingPrice: 2_100_000, age: 23 },
@@ -79,15 +82,14 @@ function formatMoney(value) {
 
 function averageTeamRating() {
   if (!state.players.length) return 0;
-  const total = state.players.reduce((sum, player) => sum + player.rating, 0);
-  return Math.round(total / state.players.length);
+  return Math.round(state.players.reduce((sum, player) => sum + player.rating, 0) / state.players.length);
 }
 
 function getTeamStrength() {
   const avgRating = averageTeamRating();
-  const avgStamina = Math.round(state.players.reduce((sum, player) => sum + player.stamina, 0) / state.players.length);
+  const avgFitness = Math.round(state.players.reduce((sum, player) => sum + (player.fitness ?? player.stamina), 0) / state.players.length);
   const avgMorale = Math.round(state.players.reduce((sum, player) => sum + player.morale, 0) / state.players.length);
-  return clamp(Math.round((avgRating * 0.7) + (avgStamina * 0.2) + (avgMorale * 0.1)), 50, 95);
+  return clamp(Math.round((avgRating * 0.7) + (avgFitness * 0.2) + (avgMorale * 0.1)), 50, 95);
 }
 
 function saveState() {
@@ -96,9 +98,7 @@ function saveState() {
 
 function loadState() {
   const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) {
-    return structuredClone(defaultState);
-  }
+  if (!saved) return structuredClone(defaultState);
 
   try {
     return JSON.parse(saved);
@@ -113,9 +113,7 @@ function addLog(message) {
 }
 
 function getNextFixture() {
-  if (state.currentFixtureIndex >= state.fixtures.length) {
-    return null;
-  }
+  if (state.currentFixtureIndex >= state.fixtures.length) return null;
   return state.fixtures[state.currentFixtureIndex];
 }
 
@@ -123,18 +121,22 @@ function getLeagueTeam(teamName) {
   return state.leagueTable.find((team) => team.team === teamName) || null;
 }
 
-function formatLeaguePosition(position) {
-  if (position === 1) return '1st';
-  if (position === 2) return '2nd';
-  if (position === 3) return '3rd';
-  return `${position}th`;
+function resetLeagueTable() {
+  state.leagueTable = [
+    { team: 'Lagos City FC', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Kano Pillars', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Enugu Rangers', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Akwa United', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Plateau United', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Abia Warriors', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Remo Stars', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 },
+    { team: 'Rivers United', played: 0, wins: 0, draws: 0, losses: 0, gf: 0, ga: 0, pts: 0 }
+  ];
 }
 
 function updateLeagueTable(teamName, goalsFor, goalsAgainst, resultType) {
   const entry = getLeagueTeam(teamName);
-  if (!entry) {
-    return;
-  }
+  if (!entry) return;
 
   entry.played += 1;
   entry.gf += goalsFor;
@@ -155,6 +157,7 @@ function renderStats() {
   const teamStrength = getTeamStrength();
   state.teamStrength = teamStrength;
 
+  document.getElementById('seasonValue').textContent = `${state.season}`;
   document.getElementById('clubName').textContent = state.clubName;
   document.getElementById('budgetValue').textContent = formatMoney(state.budget);
   document.getElementById('reputationValue').textContent = `${state.reputation}`;
@@ -164,11 +167,19 @@ function renderStats() {
   document.getElementById('recordValue').textContent = `${state.wins}-${state.draws}-${state.losses}`;
   document.getElementById('weekLabel').textContent = `Week ${state.week}`;
   document.getElementById('teamStrengthValue').textContent = `${teamStrength}`;
-
+  document.getElementById('tacticLabel').textContent = capitalize(state.tactic);
+    
   const nextFixture = getNextFixture();
   document.getElementById('nextFixtureValue').textContent = nextFixture
     ? `${nextFixture.home ? 'vs' : '@'} ${nextFixture.opponent}`
     : 'Season complete';
+
+  const tacticSelect = document.getElementById('tacticSelect');
+  tacticSelect.value = state.tactic;
+}
+
+function capitalize(value) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function renderRoster() {
@@ -178,6 +189,11 @@ function renderRoster() {
   state.players.forEach((player) => {
     const card = document.createElement('div');
     card.className = 'player-card';
+
+    const fitness = player.fitness ?? player.stamina;
+    const statusText = player.injury > 0 ? 'Injured' : `Fit ${fitness}`;
+    const badgeClass = player.injury > 0 ? 'injured' : 'fitness';
+
     card.innerHTML = `
       <div class="player-card-header">
         <div>
@@ -188,8 +204,11 @@ function renderRoster() {
       <div class="player-meta">
         <span>${player.position}</span>
         <span>Age ${player.age}</span>
-        <span>Stamina ${player.stamina}</span>
         <span>Morale ${player.morale}</span>
+      </div>
+      <div class="player-badges">
+        <span class="player-status ${badgeClass}">${statusText}</span>
+        <span class="player-status fitness">${player.injury > 0 ? `Out ${player.injury} w` : `Stamina ${player.stamina}`}</span>
       </div>
     `;
     container.appendChild(card);
@@ -216,14 +235,17 @@ function renderTransferMarket() {
         <span>Price: ${formatMoney(player.askingPrice)}</span>
       </div>
       <button class="primary buy-btn" data-player-id="${player.id}">Buy Player</button>
+      <button class="secondary negotiate-btn" data-player-id="${player.id}">Negotiate</button>
     `;
     container.appendChild(card);
   });
 
   container.querySelectorAll('.buy-btn').forEach((button) => {
-    button.addEventListener('click', () => {
-      buyPlayer(Number(button.dataset.playerId));
-    });
+    button.addEventListener('click', () => buyPlayer(Number(button.dataset.playerId)));
+  });
+
+  container.querySelectorAll('.negotiate-btn').forEach((button) => {
+    button.addEventListener('click', () => negotiateTransfer(Number(button.dataset.playerId)));
   });
 }
 
@@ -256,16 +278,14 @@ function renderLeagueTable() {
     return b.gf - a.gf;
   });
 
-  tbody.innerHTML = rows
-    .map((team, index) => `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${team.team}</td>
-        <td>${team.played}</td>
-        <td>${team.pts}</td>
-      </tr>
-    `)
-    .join('');
+  tbody.innerHTML = rows.map((team, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${team.team}</td>
+      <td>${team.played}</td>
+      <td>${team.pts}</td>
+    </tr>
+  `).join('');
 }
 
 function renderLog() {
@@ -309,13 +329,13 @@ function render() {
 }
 
 function trainSquad() {
-  const playersBoosted = state.players.map((player) => ({
+  state.players = state.players.map((player) => ({
     ...player,
-    stamina: clamp(player.stamina + Math.floor(Math.random() * 6 + 2), 50, 99),
+    stamina: clamp((player.stamina ?? player.fitness ?? 70) + Math.floor(Math.random() * 6 + 2), 50, 99),
+    fitness: clamp((player.fitness ?? player.stamina ?? 70) + Math.floor(Math.random() * 6 + 2), 50, 99),
     morale: clamp(player.morale + Math.floor(Math.random() * 5 + 2), 55, 99)
   }));
 
-  state.players = playersBoosted;
   state.morale = clamp(state.morale + 5, 50, 99);
   state.reputation = clamp(state.reputation + 1, 0, 100);
   state.budget -= 250_000;
@@ -340,9 +360,7 @@ function scoutTalent() {
 
 function buyPlayer(playerId) {
   const player = state.transferMarket.find((item) => item.id === playerId);
-  if (!player) {
-    return;
-  }
+  if (!player) return;
 
   if (state.budget < player.askingPrice) {
     addLog(`The club cannot afford ${player.name} right now. Budget is too tight.`);
@@ -358,8 +376,10 @@ function buyPlayer(playerId) {
     rating: player.rating,
     age: player.age,
     stamina: 70 + Math.floor(Math.random() * 20),
+    fitness: 70 + Math.floor(Math.random() * 20),
     morale: 70 + Math.floor(Math.random() * 20),
-    value: player.askingPrice
+    value: player.askingPrice,
+    injury: 0
   });
 
   state.transferMarket = state.transferMarket.filter((item) => item.id !== playerId);
@@ -367,21 +387,95 @@ function buyPlayer(playerId) {
   render();
 }
 
+function negotiateTransfer(playerId) {
+  const player = state.transferMarket.find((item) => item.id === playerId);
+  if (!player) return;
+
+  const discountedPrice = Math.round(player.askingPrice * 0.85);
+  if (state.budget < discountedPrice) {
+    addLog(`The board rejects the bid for ${player.name}. The asking price is too high.`);
+    render();
+    return;
+  }
+
+  state.budget -= discountedPrice;
+  state.players.push({
+    id: Date.now(),
+    name: player.name,
+    position: player.position,
+    rating: player.rating,
+    age: player.age,
+    stamina: 72 + Math.floor(Math.random() * 18),
+    fitness: 72 + Math.floor(Math.random() * 18),
+    morale: 72 + Math.floor(Math.random() * 18),
+    value: discountedPrice,
+    injury: 0
+  });
+
+  state.transferMarket = state.transferMarket.filter((item) => item.id !== playerId);
+  addLog(`${player.name} is signed after successful negotiations for ${formatMoney(discountedPrice)}.`);
+  render();
+}
+
+function pressConference() {
+  const boost = state.wins >= state.losses ? 6 : 2;
+  state.morale = clamp(state.morale + boost, 50, 99);
+  state.reputation = clamp(state.reputation + 2, 0, 100);
+  addLog('The press conference goes well. The media praises your tactical plan and squad leadership.');
+  render();
+}
+
+function recoverSquad() {
+  if (state.budget < 200_000) {
+    addLog('There is not enough money for a recovery programme this week.');
+    render();
+    return;
+  }
+
+  state.budget -= 200_000;
+  state.players = state.players.map((player) => ({
+    ...player,
+    stamina: clamp((player.stamina ?? player.fitness ?? 70) + 6, 50, 99),
+    fitness: clamp((player.fitness ?? player.stamina ?? 70) + 6, 50, 99),
+    injury: Math.max(0, (player.injury ?? 0) - 1),
+    morale: clamp(player.morale + 2, 50, 99)
+  }));
+
+  addLog('The medical team restores the squad and cuts down injuries ahead of the fixture list.');
+  render();
+}
+
+function applyTacticToTeam() {
+  const tactic = state.tactic;
+  if (tactic === 'attacking') {
+    state.players = state.players.map((player) => ({
+      ...player,
+      morale: clamp(player.morale + 1, 50, 99),
+      fitness: clamp((player.fitness ?? player.stamina ?? 70) + 1, 50, 99)
+    }));
+  }
+  if (tactic === 'defensive') {
+    state.morale = clamp(state.morale + 1, 50, 99);
+  }
+}
+
+function onTacticChange(event) {
+  state.tactic = event.target.value;
+  applyTacticToTeam();
+  addLog(`You switch to a ${capitalize(state.tactic)} setup. The squad adapts to the new plan.`);
+  render();
+}
+
 function generateGoalTimes(homeGoals, awayGoals) {
   const timeline = [];
-
-  const makeGoal = (team, goals) => {
+  const pushGoals = (team, goals) => {
     for (let i = 0; i < goals; i += 1) {
-      timeline.push({
-        team,
-        time: 18 + Math.random() * 80,
-        triggered: false
-      });
+      timeline.push({ team, time: 18 + Math.random() * 80, triggered: false });
     }
   };
 
-  makeGoal('home', homeGoals);
-  makeGoal('away', awayGoals);
+  pushGoals('home', homeGoals);
+  pushGoals('away', awayGoals);
   return timeline.sort((a, b) => a.time - b.time);
 }
 
@@ -394,11 +488,7 @@ function createMatch(fixture) {
   const actualHomeGoals = Math.min(5, likelyHomeGoals + (Math.random() < 0.15 ? 1 : 0));
   const actualAwayGoals = Math.min(5, likelyAwayGoals + (Math.random() < 0.15 ? 1 : 0));
 
-  const teamColors = {
-    home: '#44d37a',
-    away: '#f6d365',
-    ball: '#fdf8ee'
-  };
+  const teamColors = { home: '#44d37a', away: '#f6d365', ball: '#fdf8ee' };
 
   return {
     fixture,
@@ -418,15 +508,7 @@ function createMatch(fixture) {
       home: createTeamPlayers(true, teamColors.home),
       away: createTeamPlayers(false, teamColors.away)
     },
-    ball: {
-      x: 430,
-      y: 260,
-      radius: 7,
-      vx: 0,
-      vy: 0,
-      owner: null,
-      lastTouchedBy: 'home'
-    },
+    ball: { x: 430, y: 260, radius: 7, vx: 0, vy: 0, owner: null, lastTouchedBy: 'home' },
     colorScheme: teamColors
   };
 }
@@ -460,13 +542,9 @@ function createTeamPlayers(isHome, color) {
 function drawPitch() {
   const canvas = document.getElementById('matchCanvas');
   const ctx = canvas.getContext('2d');
-
-  if (!ctx) {
-    return;
-  }
+  if (!ctx) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   ctx.fillStyle = '#1a8d47';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -491,7 +569,7 @@ function drawPitch() {
   ctx.fillStyle = '#bfecc3';
   ctx.font = '18px Arial';
   ctx.fillText('Lagos City FC', 24, 35);
-  ctx.fillText('Away', canvas.width - 100, 35);
+  ctx.fillText('Away', canvas.width - 110, 35);
 }
 
 function drawMatchFrame() {
@@ -499,16 +577,11 @@ function drawMatchFrame() {
   const ctx = canvas.getContext('2d');
   const match = state.currentMatch;
 
-  if (!match) {
-    return;
-  }
+  if (!match) return;
 
   drawPitch();
 
-  const { ball, teams } = match;
-  const ballColor = match.colorScheme.ball;
-
-  Object.values(teams).forEach((team) => {
+  Object.values(match.teams).forEach((team) => {
     team.forEach((player) => {
       ctx.beginPath();
       ctx.fillStyle = player.color;
@@ -524,8 +597,8 @@ function drawMatchFrame() {
   });
 
   ctx.beginPath();
-  ctx.fillStyle = ballColor;
-  ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+  ctx.fillStyle = match.colorScheme.ball;
+  ctx.arc(match.ball.x, match.ball.y, match.ball.radius, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.fillStyle = '#ffffff';
@@ -535,29 +608,24 @@ function drawMatchFrame() {
 
 function updateMatchAnimation() {
   const match = state.currentMatch;
-  if (!match) {
-    return;
-  }
+  if (!match) return;
 
   const now = performance.now();
   const dt = (now - match.lastTimestamp) / 1000;
   match.lastTimestamp = now;
   match.elapsed += dt;
 
-  if (match.goalTimeline.length) {
-    const nextGoal = match.goalTimeline.find((goal) => !goal.triggered && match.elapsed >= goal.time);
-    if (nextGoal) {
-      nextGoal.triggered = true;
-      if (nextGoal.team === 'home') {
-        match.scoreHome += 1;
-      } else {
-        match.scoreAway += 1;
-      }
-      state.matchStatus = `${match.homeName} ${match.scoreHome} - ${match.scoreAway} ${match.awayName}`;
+  const nextGoal = match.goalTimeline.find((goal) => !goal.triggered && match.elapsed >= goal.time);
+  if (nextGoal) {
+    nextGoal.triggered = true;
+    if (nextGoal.team === 'home') {
+      match.scoreHome += 1;
+    } else {
+      match.scoreAway += 1;
     }
+    state.matchStatus = `${match.homeName} ${match.scoreHome} - ${match.scoreAway} ${match.awayName}`;
   }
 
-  const movementSpeed = 36;
   const homeTeam = match.teams.home;
   const awayTeam = match.teams.away;
 
@@ -577,8 +645,8 @@ function updateMatchAnimation() {
 
   const attackingHome = match.scoreHome <= match.scoreAway ? homeTeam : awayTeam;
   const ballOwner = attackingHome[Math.floor((match.elapsed * 2) % attackingHome.length)];
-  match.ball.x += (ballOwner.x - match.ball.x) * 0.09 * movementSpeed * dt;
-  match.ball.y += (ballOwner.y - match.ball.y) * 0.09 * movementSpeed * dt;
+  match.ball.x += (ballOwner.x - match.ball.x) * 0.09 * 36 * dt;
+  match.ball.y += (ballOwner.y - match.ball.y) * 0.09 * 36 * dt;
 
   if (match.elapsed > 110) {
     finalizeMatch();
@@ -586,13 +654,12 @@ function updateMatchAnimation() {
   }
 
   drawMatchFrame();
+  renderMatchOverlay();
   animationFrameId = requestAnimationFrame(updateMatchAnimation);
 }
 
 function finalizeMatch() {
-  if (!state.currentMatch) {
-    return;
-  }
+  if (!state.currentMatch) return;
 
   const match = state.currentMatch;
   const fixture = match.fixture;
@@ -624,6 +691,19 @@ function finalizeMatch() {
     updateLeagueTable(fixture.opponent, awayGoals, homeGoals, 'draw');
   }
 
+  state.players = state.players.map((player) => {
+    const fatigue = Math.round(Math.random() * 8 + 3);
+    const newFitness = clamp((player.fitness ?? player.stamina ?? 70) - fatigue, 40, 99);
+    const injuryRisk = Math.random() < 0.14 ? 1 + Math.floor(Math.random() * 2) : 0;
+    return {
+      ...player,
+      stamina: newFitness,
+      fitness: newFitness,
+      morale: clamp(player.morale - (injuryRisk > 0 ? 6 : 0), 45, 99),
+      injury: injuryRisk > 0 ? injuryRisk : player.injury > 0 ? Math.max(0, player.injury - 1) : 0
+    };
+  });
+
   state.fans = Math.max(20000, state.fans + (homeGoals > awayGoals ? 1200 : 300));
   state.currentFixtureIndex += 1;
   state.matchRunning = false;
@@ -646,9 +726,7 @@ function start2DMatch() {
     return;
   }
 
-  if (state.matchRunning) {
-    return;
-  }
+  if (state.matchRunning) return;
 
   state.matchRunning = true;
   state.matchStatus = 'Kick off';
@@ -677,7 +755,6 @@ function quickResult() {
 
   let homeGoals = 0;
   let awayGoals = 0;
-
   const baseGoalChance = clamp(teamStrength + homeBoost - opponentStrength, -12, 18);
   const homeChance = Math.max(0.25, 0.5 + baseGoalChance / 50);
   const awayChance = Math.max(0.2, 0.45 - baseGoalChance / 70);
@@ -690,9 +767,7 @@ function quickResult() {
   homeGoals = Math.min(homeGoals, 5);
   awayGoals = Math.min(awayGoals, 5);
 
-  if (homeGoals === 0 && awayGoals === 0 && Math.random() < 0.2) {
-    homeGoals += 1;
-  }
+  if (homeGoals === 0 && awayGoals === 0 && Math.random() < 0.2) homeGoals += 1;
 
   state.currentMatch = {
     fixture,
@@ -719,13 +794,6 @@ function quickResult() {
 }
 
 function simulateMatch() {
-  const fixture = getNextFixture();
-  if (!fixture) {
-    addLog('The league season is over. You have completed all your fixtures.');
-    render();
-    return;
-  }
-
   start2DMatch();
 }
 
@@ -734,10 +802,41 @@ function advanceWeek() {
   state.players = state.players.map((player) => ({
     ...player,
     morale: clamp(player.morale + Math.floor(Math.random() * 4) - 1, 50, 99),
-    stamina: clamp(player.stamina + Math.floor(Math.random() * 3), 50, 99)
+    stamina: clamp((player.stamina ?? player.fitness ?? 70) + Math.floor(Math.random() * 3), 50, 99),
+    fitness: clamp((player.fitness ?? player.stamina ?? 70) + Math.floor(Math.random() * 3), 50, 99)
   }));
   state.morale = clamp(state.morale + 1, 50, 99);
   addLog('The week passes and the squad settles into routine training and media duties.');
+  render();
+}
+
+function advanceSeason() {
+  if (state.currentFixtureIndex < state.fixtures.length) {
+    addLog('You need to finish the current season before starting a new one.');
+    render();
+    return;
+  }
+
+  state.season += 1;
+  state.currentFixtureIndex = 0;
+  state.points = 0;
+  state.wins = 0;
+  state.draws = 0;
+  state.losses = 0;
+  state.week = 1;
+  state.budget += 4_000_000;
+  state.fans = Math.max(20000, state.fans + 4000);
+  state.fixtures = baseFixtures.map((fixture) => ({ ...fixture, status: 'Upcoming' }));
+  state.reputation = clamp(state.reputation + 4, 0, 100);
+  state.players = state.players.map((player) => ({
+    ...player,
+    morale: clamp(player.morale + 4, 50, 99),
+    fitness: clamp((player.fitness ?? player.stamina ?? 70) + 5, 45, 99),
+    stamina: clamp((player.stamina ?? player.fitness ?? 70) + 5, 45, 99),
+    injury: Math.max(0, (player.injury ?? 0) - 1)
+  }));
+  resetLeagueTable();
+  addLog(`Season ${state.season} begins with a fresh campaign and a stronger budget for recruitment.`);
   render();
 }
 
@@ -750,10 +849,14 @@ function resetGame() {
 function init() {
   document.getElementById('trainBtn').addEventListener('click', trainSquad);
   document.getElementById('playBtn').addEventListener('click', simulateMatch);
+  document.getElementById('pressBtn').addEventListener('click', pressConference);
+  document.getElementById('recoverBtn').addEventListener('click', recoverSquad);
   document.getElementById('startMatchBtn').addEventListener('click', start2DMatch);
   document.getElementById('quickResultBtn').addEventListener('click', quickResult);
   document.getElementById('weekBtn').addEventListener('click', advanceWeek);
+  document.getElementById('seasonBtn').addEventListener('click', advanceSeason);
   document.getElementById('scoutBtn').addEventListener('click', scoutTalent);
+  document.getElementById('tacticSelect').addEventListener('change', onTacticChange);
   document.getElementById('saveBtn').addEventListener('click', () => {
     saveState();
     addLog('Game saved successfully.');
@@ -766,5 +869,4 @@ function init() {
 }
 
 init();
-
 window.addEventListener('beforeunload', saveState);

@@ -31,6 +31,10 @@
 
           <section class="stats-grid">
             <div class="stat-card">
+              <span>Season</span>
+              <strong id="seasonValue">1</strong>
+            </div>
+            <div class="stat-card">
               <span>Budget</span>
               <strong id="budgetValue">₦0</strong>
             </div>
@@ -54,21 +58,36 @@
               <span>W-D-L</span>
               <strong id="recordValue">0-0-0</strong>
             </div>
+            <div class="stat-card">
+              <span>Strength</span>
+              <strong id="teamStrengthValue">0</strong>
+            </div>
           </section>
 
           <section class="action-group">
             <h3>Club Actions</h3>
+            <label class="tactic-picker">
+              <span>Tactics</span>
+              <select id="tacticSelect">
+                <option value="balanced">Balanced</option>
+                <option value="attacking">Attacking</option>
+                <option value="defensive">Defensive</option>
+              </select>
+            </label>
             <button id="trainBtn" class="primary">Train Squad</button>
             <button id="playBtn" class="primary">Play Next Match</button>
+            <button id="pressBtn" class="secondary">Press Conference</button>
+            <button id="recoverBtn" class="secondary">Recover Squad</button>
             <button id="weekBtn" class="secondary">Advance Week</button>
+            <button id="seasonBtn" class="secondary">Advance Season</button>
             <button id="scoutBtn" class="secondary">Scout Talent</button>
           </section>
 
           <section class="battle-card">
             <h3>Current Form</h3>
             <div class="form-line">
-              <span>Team Strength</span>
-              <strong id="teamStrengthValue">0</strong>
+              <span>Club Style</span>
+              <strong id="tacticLabel">Balanced</strong>
             </div>
             <div class="form-line">
               <span>Next Fixture</span>

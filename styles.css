@@ -25,6 +25,10 @@ body {
   color: var(--text);
 }
 
+button, select {
+  font: inherit;
+}
+
 button {
   border: none;
   border-radius: 10px;
@@ -53,6 +57,15 @@ button.danger {
   background: rgba(255, 107, 107, 0.12);
   color: #ffd7d7;
   border: 1px solid rgba(255, 107, 107, 0.25);
+}
+
+select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.7rem 0.8rem;
 }
 
 .app-shell {
@@ -165,6 +178,13 @@ h1 {
   gap: 0.7rem;
 }
 
+.tactic-picker {
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .battle-card {
   margin-top: 1rem;
   background: rgba(255, 255, 255, 0.03);
@@ -247,8 +267,37 @@ h1 {
   color: #dfffe8;
 }
 
-.market-card .buy-btn {
-  margin-top: 0.7rem;
+.player-badges {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.player-status {
+  display: inline-block;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.player-status.injured {
+  background: rgba(255, 107, 107, 0.16);
+  color: #ffd4d4;
+}
+
+.player-status.fitness {
+  background: rgba(77, 220, 137, 0.16);
+  color: #dffff0;
+}
+
+.market-card {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.market-card .buy-btn,
+.market-card .negotiate-btn {
   width: 100%;
 }
 
