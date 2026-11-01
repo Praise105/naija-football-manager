@@ -106,11 +106,126 @@ h1 {
   gap: 0.75rem;
 }
 
+.page-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.page-tab {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  color: var(--text);
+  min-width: 150px;
+}
+
+.page-tab.active {
+  background: linear-gradient(135deg, rgba(77, 220, 137, 0.22), rgba(42, 157, 101, 0.28));
+  border-color: rgba(77, 220, 137, 0.6);
+}
+
+.page-section {
+  display: none;
+}
+
+.page-section.active {
+  display: block;
+}
+
+.dashboard.page-section.active {
+  display: grid;
+}
+
 .dashboard {
   margin-top: 1.3rem;
   display: grid;
   grid-template-columns: 1.05fr 1.55fr 1.2fr;
   gap: 1.1rem;
+}
+
+.content-page {
+  margin-top: 1.3rem;
+  background: rgba(18, 55, 45, 0.82);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 1.4rem;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+}
+
+.page-header {
+  margin-bottom: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.9rem;
+}
+
+.page-header p {
+  color: var(--muted);
+}
+
+.page-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.content-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.content-card.selected {
+  border-color: rgba(77, 220, 137, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(77, 220, 137, 0.2);
+}
+
+.content-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.content-card h3 {
+  font-size: 1.2rem;
+}
+
+.content-badge {
+  background: rgba(77, 220, 137, 0.12);
+  color: #dfffe8;
+  border-radius: 999px;
+  padding: 0.3rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.content-card p {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.content-card ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.empty-state {
+  padding: 1rem;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .panel {
@@ -313,7 +428,9 @@ h1 {
 }
 
 .market-card .buy-btn,
-.market-card .negotiate-btn {
+.market-card .negotiate-btn,
+.content-card .buy-btn,
+.content-card .negotiate-btn {
   width: 100%;
 }
 
@@ -483,5 +600,15 @@ h1 {
 
   .match-controls {
     flex-direction: column;
+  }
+
+  .page-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
