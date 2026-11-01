@@ -27,6 +27,7 @@ const defaultState = {
   week: 1,
   season: 1,
   tactic: 'balanced',
+  formation: '4-3-3',
   teamStrength: 77,
   currentFixtureIndex: 0,
   log: [
@@ -243,6 +244,54 @@ const defaultState = {
   matchStatus: 'Kick off',
   matchEvents: []
 };
+
+const tactics = [
+  {
+    id: 'balanced',
+    title: 'Balanced',
+    summary: 'Stable defending with controlled possession and measured transitions.',
+    strengths: ['Good structure', 'Reliable pressing', 'Safe transitions']
+  },
+  {
+    id: 'attacking',
+    title: 'Attacking',
+    summary: 'High press and aggressive wing play designed to overwhelm defenders.',
+    strengths: ['More chances created', 'Faster build-up', 'Direct attacks']
+  },
+  {
+    id: 'defensive',
+    title: 'Defensive',
+    summary: 'Compact back line and disciplined shape to absorb pressure and counter.',
+    strengths: ['Tighter midfield', 'Improved security', 'Better counters']
+  }
+];
+
+const formations = [
+  {
+    id: '4-3-3',
+    title: '4-3-3',
+    summary: 'An aggressive shape with width, central control, and quick front-line pressing.',
+    strengths: ['Wide overload', 'Strong midfield connection', 'Compact front line']
+  },
+  {
+    id: '4-2-3-1',
+    title: '4-2-3-1',
+    summary: 'A flexible system that balances midfield control and central creativity.',
+    strengths: ['Protection in midfield', 'Creative number 10', 'Front-foot pressing']
+  },
+  {
+    id: '3-5-2',
+    title: '3-5-2',
+    summary: 'An attacking wing-back shape built around wing control and second balls.',
+    strengths: ['Extra width', 'Dominant midfield', 'Vertical passing']
+  },
+  {
+    id: '5-3-2',
+    title: '5-3-2',
+    summary: 'A deep, secure structure suited to tough away fixtures and defensive solidity.',
+    strengths: ['Solid defense', 'Compact shape', 'Counter-attacking focus']
+  }
+];
 
 let state = loadState();
 let animationFrameId = null;
@@ -533,6 +582,94 @@ function renderMatchFeed() {
   });
 }
 
+function renderTacticsPage() {
+  const container = document.getElementById('tacticsPageContent');
+  container.innerHTML = tactics.map((tactic) => `
+    <article class="content-card ${state.tactic === tactic.id ? 'selected' : ''}">
+      <div class="content-card-header">
+        <h3>${tactic.title}</h3>
+        <span class="content-badge">${state.tactic === tactic.id ? 'Active' : 'Available'}</span>
+      </div>
+      <p>${tactic.summary}</p>
+      <ul>
+        ${tactic.strengths.map((item) => `<li>${item}</li>`).join('')}
+      </ul>
+      <button class="primary tactic-select-btn" data-tactic="${tactic.id}" type="button">${state.tactic === tactic.id ? 'Selected' : 'Choose tactic'}</button>
+    </article>
+  `).join('');
+
+  container.querySelectorAll('.tactic-select-btn').forEach((button) => {
+    button.addEventListener('click', () => {
+      state.tactic = button.dataset.tactic;
+      applyTacticToTeam();
+      addLog(`You switch to a ${capitalize(state.tactic)} setup. The squad adapts to the new plan.`);
+      render();
+    });
+  });
+}
+
+function renderFormationsPage() {
+  const container = document.getElementById('formationsPageContent');
+  container.innerHTML = formations.map((formation) => `
+    <article class="content-card ${state.formation === formation.id ? 'selected' : ''}">
+      <div class="content-card-header">
+        <h3>${formation.title}</h3>
+        <span class="content-badge">${state.formation === formation.id ? 'Active' : 'Shape'}</span>
+      </div>
+      <p>${formation.summary}</p>
+      <ul>
+        ${formation.strengths.map((item) => `<li>${item}</li>`).join('')}
+      </ul>
+      <button class="primary formation-select-btn" data-formation="${formation.id}" type="button">${state.formation === formation.id ? 'Selected' : 'Choose formation'}</button>
+    </article>
+  `).join('');
+
+  container.querySelectorAll('.formation-select-btn').forEach((button) => {
+    button.addEventListener('click', () => {
+      state.formation = button.dataset.formation;
+      addLog(`The squad is set up in a ${state.formation} shape for the next phase of the season.`);
+      render();
+    });
+  });
+}
+
+function renderTransferPage() {
+  const container = document.getElementById('transferMarketPageContent');
+
+  if (!state.transferMarket.length) {
+    container.innerHTML = '<div class="empty-state">No targets are available in the market right now.</div>';
+    return;
+  }
+
+  container.innerHTML = state.transferMarket.map((player) => {
+    const overall = player.attributes ? Math.round(Object.values(player.attributes).reduce((sum, value) => sum + value, 0) / Object.keys(player.attributes).length) : player.rating;
+    return `
+      <article class="content-card">
+        <div class="content-card-header">
+          <h3>${player.name}</h3>
+          <span class="content-badge">${overall}</span>
+        </div>
+        <p>${player.position} • Age ${player.age} • Contract ${player.contractLength} years</p>
+        <ul>
+          <li>Asking price: ${formatMoney(player.askingPrice)}</li>
+          <li>Weekly wage: ${formatMoney(player.weeklyWage)}</li>
+          <li>Rating: ${player.rating}</li>
+        </ul>
+        <button class="primary buy-btn" data-player-id="${player.id}" type="button">Buy Player</button>
+        <button class="secondary negotiate-btn" data-player-id="${player.id}" type="button">Negotiate</button>
+      </article>
+    `;
+  }).join('');
+
+  container.querySelectorAll('.buy-btn').forEach((button) => {
+    button.addEventListener('click', () => buyPlayer(Number(button.dataset.playerId)));
+  });
+
+  container.querySelectorAll('.negotiate-btn').forEach((button) => {
+    button.addEventListener('click', () => negotiateTransfer(Number(button.dataset.playerId)));
+  });
+}
+
 function render() {
   renderStats();
   renderRoster();
@@ -543,6 +680,9 @@ function render() {
   renderLog();
   renderMatchOverlay();
   renderMatchFeed();
+  renderTacticsPage();
+  renderFormationsPage();
+  renderTransferPage();
   saveState();
 }
 
@@ -746,7 +886,7 @@ function generateMatchEvents(homeGoals, awayGoals) {
     events.push(`${Math.floor(Math.random() * 75) + 10}' Opponent • Goal!`);
   }
 
-  return events.slice(0, 10).sort((a, b) => Number(a.split("'" )[0]) - Number(b.split("'" )[0]));
+  return events.slice(0, 10).sort((a, b) => Number(a.split("' ")[0]) - Number(b.split("' ")[0]));
 }
 
 function createMatch(fixture) {
@@ -1150,6 +1290,19 @@ function resetGame() {
   render();
 }
 
+function switchPage(pageKey) {
+  const targetPage = pageKey === 'dashboard' ? 'dashboardPage' : `${pageKey}Page`;
+  document.querySelectorAll('.page-section').forEach((section) => {
+    const isActive = section.id === targetPage;
+    section.classList.toggle('active', isActive);
+  });
+
+  document.querySelectorAll('.page-tab').forEach((tab) => {
+    const isActive = tab.dataset.page === pageKey;
+    tab.classList.toggle('active', isActive);
+  });
+}
+
 function init() {
   document.getElementById('trainBtn').addEventListener('click', trainSquad);
   document.getElementById('playBtn').addEventListener('click', simulateMatch);
@@ -1167,6 +1320,10 @@ function init() {
     render();
   });
   document.getElementById('resetBtn').addEventListener('click', resetGame);
+
+  document.querySelectorAll('.page-tab').forEach((tab) => {
+    tab.addEventListener('click', () => switchPage(tab.dataset.page));
+  });
 
   state.wageBill = state.players.reduce((sum, player) => sum + (player.weeklyWage || 0), 0);
   render();
