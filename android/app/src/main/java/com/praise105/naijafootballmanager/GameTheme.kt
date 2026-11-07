@@ -1,7 +1,7 @@
 package com.praise105.naijafootballmanager
 
 import androidx.compose.material3.MaterialTheme
-aimport androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
